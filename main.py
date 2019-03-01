@@ -4,7 +4,23 @@ TOKEN = 'NTUwODU1MTUxODkyNjkyOTky.D1ovfA._13Nmqjkh01I_Q9b8I_wPX9mtBA'
 client = discord.Client()
 
 class Server():
-    pass
+    def __init__(self, name, port, directory):
+        self.commands = []
+        self.roles = []
+        self.port = port
+        self.name = name
+        self.dir = directory
+        self.roles.insert(0, "Developer")
+        self.roles.insert(0, "Admin")
+    
+    def addCommand(self, command, output):
+        self.commands.insert(0, [command, output])
+
+    def addRole(self, role):
+        self.roles.insert(0, role)
+
+    def doCommand(self, command):
+        pass
 
 @client.event
 async def on_message(message):
