@@ -1,5 +1,6 @@
 import discord
 import os
+import psutil
 
 TOKEN = 'NTUwODU1MTUxODkyNjkyOTky.D1ovfA._13Nmqjkh01I_Q9b8I_wPX9mtBA'
 client = discord.Client()
@@ -14,6 +15,14 @@ def startServer():
 def updateServer():
     os.system(directory + '\\update.bat')
 
+def getRam():
+    islePID = 0
+    process = filter(lambda p: p.name() == "TheIsleServer-Win64-Shipping.exe", psutil.process_iter())
+    for i in process:
+        islePID = psutil.Process(i.pid)
+    memoryUse = islePID.memory_info()[0]/2.**30
+    return memoryUse
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -24,13 +33,14 @@ async def on_message(message):
         msg = msg + ' {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
-    if str(message.channel) == 'sapphire-isle':
+    if str(message.channel) == 'sapphire-isle' or str(message.channel) == 'main-server-box':
         if message.content.startswith('!help') or message.content.startswith('!commands'):
             msg = 'Commands:'
             msg = msg + '```!start | Starts the server\n'
             msg = msg + '!stop | Stops the server\n'
             msg = msg + '!update | Updates the server\n'
-            msg = msg + '!restart | Restarts the server'
+            msg = msg + '!restart | Restarts the server\n'
+            msg = msg + '!status | Gives RAM Usage and Server Online Status'
             msg = msg + '```'.format(message)
             await client.send_message(message.channel, msg)
         if message.content.startswith('!start'):
@@ -53,6 +63,12 @@ async def on_message(message):
             killServer()
             startServer()
             msg = '{0.author.mention} | Server Restarted'.format(message)
+            await client.send_message(message.channel, msg)
+        elif message.content.startswith('!status'):
+            ram = round(getRam())
+            ram = str(ram)
+            msg = '{0.author.mention} | RAM Usage: ' + ram + ' GB'
+            msg = msg.format(message)
             await client.send_message(message.channel, msg)
     elif str(message.channel) == 'admin':
         pass
