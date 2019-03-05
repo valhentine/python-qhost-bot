@@ -27,6 +27,17 @@ def getRam():
         memoryUse = islePID.memory_info()[0]/2.**30
     return memoryUse
 
+def getCpu():
+    islePID = 0
+    cpuUse = 0
+    process = filter(lambda p: p.name() == "TheIsleServer-Win64-Shipping.exe", psutil.process_iter())
+    for i in process:
+        islePID = psutil.Process(i.pid)
+    if islePID != 0:
+        cpuUse = islePID.cpu_percent(interval=1) / psutil.cpu_count()
+        cpuUse = round(cpuUse)
+    return cpuUse
+
 def getOnline():
     islePID = 0
     process = filter(lambda p: p.name() == "TheIsleServer-Win64-Shipping.exe", psutil.process_iter())
@@ -89,12 +100,14 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
         elif message.content.startswith('!status'):
             ram = round(getRam())
+            cpu = getCpu()
+            cpu = str(cpu)
             ram = str(ram)
             online = getOnline()
             if online:
-                msg = '{0.author.mention} | RAM Usage: ' + ram + ' GB | Server is ONLINE'
+                msg = '{0.author.mention} | RAM Usage: ' + ram + ' GB | CPU Usage: ' + cpu + '% | Server is ONLINE'
             else:
-                msg = '{0.author.mention} | RAM Usage: 0 GB | Server is OFFLINE'
+                msg = '{0.author.mention} | RAM Usage: 0 GB | 0% CPU | Server is OFFLINE'
             
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
