@@ -17,11 +17,24 @@ def updateServer():
 
 def getRam():
     islePID = 0
+    memoryUse = 0
     process = filter(lambda p: p.name() == "TheIsleServer-Win64-Shipping.exe", psutil.process_iter())
     for i in process:
         islePID = psutil.Process(i.pid)
-    memoryUse = islePID.memory_info()[0]/2.**30
+    if islePID != 0:
+        memoryUse = islePID.memory_info()[0]/2.**30
     return memoryUse
+
+def getOnline():
+    islePID = 0
+    process = filter(lambda p: p.name() == "TheIsleServer-Win64-Shipping.exe", psutil.process_iter())
+    for i in process:
+        islePID = psutil.Process(i.pid)
+    if islePID == 0:
+        return False
+    else:
+        return True
+
 
 @client.event
 async def on_message(message):
@@ -67,7 +80,12 @@ async def on_message(message):
         elif message.content.startswith('!status'):
             ram = round(getRam())
             ram = str(ram)
-            msg = '{0.author.mention} | RAM Usage: ' + ram + ' GB'
+            online = getOnline()
+            if online:
+                msg = '{0.author.mention} | RAM Usage: ' + ram + ' GB | Server is ONLINE'
+            else:
+                msg = '{0.author.mention} | RAM Usage: 0 GB | Server is OFFLINE'
+            
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
     elif str(message.channel) == 'admin':
