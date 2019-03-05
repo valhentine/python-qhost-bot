@@ -1,10 +1,12 @@
 import discord
 import os
 import psutil
+import json
 
 TOKEN = 'NTUwODU1MTUxODkyNjkyOTky.D1ovfA._13Nmqjkh01I_Q9b8I_wPX9mtBA'
 client = discord.Client()
 directory = "D:\servers\sapphire\isle"
+playersDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players\\'
 
 def killServer():
     os.system('taskkill /F /FI "WindowTitle eq Administrator:  qHost Isle Server" /T')
@@ -34,6 +36,14 @@ def getOnline():
         return False
     else:
         return True
+
+def getPlayer(steamID):
+    if os.path.isfile(playersDir + steamID + ".json"):
+        with open(playersDir + steamID + ".json") as f:
+            data = json.load(f)
+        return(data)
+    else:
+        return False
 
 
 @client.event
@@ -88,6 +98,23 @@ async def on_message(message):
             
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
+        elif message.content.startswith('!getplayer'):
+            command = message.content
+            command = command.split()
+            player = getPlayer(command[1])
+            if player:
+                msg = command[1]
+                msg = msg + '```'
+                for key, value in player.items():
+                    msg = msg + str(key) + ' : ' + str(value) + '\n'
+                msg = msg + '```'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                msg = 'Player file does not exist at ' + command[1]
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+
     elif str(message.channel) == 'admin':
         pass
 
