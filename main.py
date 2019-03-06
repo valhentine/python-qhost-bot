@@ -213,6 +213,26 @@ async def on_message(message):
                 msg = msg + '```'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
+        elif message.content.startswith('!upload'):
+            command = message.content
+            command = command.split()
+            msg = '{0.author.mention} | Starting upload of player file ' + str(command[1])
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+            f = open("up.ftp", "w")
+            f.write('open 144.48.104.226 8821\n')
+            f.write('JuicyJuiceNV\n')
+            f.write('JuIcEJuiCy$4567\n')
+            f.write('cd /144.48.104.226_14010/TheIsle/Saved/Databases/Survival/Players\n')
+            f.write('put D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players\\' + str(command[1]) + '.json\n')
+            f.write('disconnect\n')
+            f.write('quit')
+            f.close()
+            os.system('ftp -i -s:up.ftp')
+            msg = '{0.author.mention} | Finished uploading player file ' + str(command[1])
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+
 
     elif str(message.channel) == 'admin':
         pass
