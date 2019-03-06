@@ -2,6 +2,7 @@ import discord
 import os
 import psutil
 import json
+import urllib.request
 
 TOKEN = 'NTUwODU1MTUxODkyNjkyOTky.D1ovfA._13Nmqjkh01I_Q9b8I_wPX9mtBA'
 client = discord.Client()
@@ -81,13 +82,8 @@ async def on_message(message):
 
     if str(message.channel) == 'sapphire-isle' or str(message.channel) == 'main-server-box':
         if message.content.startswith('!help') or message.content.startswith('!commands'):
-            msg = 'Commands:'
-            msg = msg + '```!start | Starts the server\n'
-            msg = msg + '!stop | Stops the server\n'
-            msg = msg + '!update | Updates the server\n'
-            msg = msg + '!restart | Restarts the server\n'
-            msg = msg + '!status | Gives RAM Usage and Server Online Status'
-            msg = msg + '```'.format(message)
+            msg = 'Please visit the server-box-control-guide text channel'
+            msg = msg + ''.format(message)
             await client.send_message(message.channel, msg)
         if message.content.startswith('!start'):
             killServer()
@@ -200,6 +196,23 @@ async def on_message(message):
                 msg = 'Player file does not exist at ' + command[1]
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
+        elif message.content.startswith('!download'):
+            command = message.content
+            command = command.split()
+            msg = '{0.author.mention} | Starting download of player file ' + str(command[1])
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+            urllib.request.urlretrieve('ftp://JuicyJuiceNV:JuIcEJuiCy$4567@144.48.104.226:8821/144.48.104.226_14010/TheIsle/Saved/Databases/Survival/Players/' + str(command[1]) + '.json', playersDir + str(command[1]) + '.json')
+            player = getPlayer(command[1])
+            if player:
+                msg = '{0.author.mention} | Download finished. Now displaying '
+                msg = msg + str(command[1])
+                msg = msg + '```'
+                for key, value in player.items():
+                    msg = msg + str(key) + ' : ' + str(value) + '\n'
+                msg = msg + '```'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
 
     elif str(message.channel) == 'admin':
         pass
@@ -212,3 +225,6 @@ async def on_ready():
     print('------')
 
 client.run(TOKEN)
+
+urllib.request.urlretrieve('ftp://JuicyJuiceNV:JuIcEJuiCy$4567@144.48.104.226:8821/144.48.104.226_14010/TheIsle/Saved/Databases/Survival/Players/', 'file')
+urllib.request.urlretrieve('ftp://JuicyJuiceNV:JuIcEJuiCy$4567@144.48.104.226:8821/144.48.104.226_14010/TheIsle/Saved/Databases/Survival/Players/76561197963350619.json', 'file')
