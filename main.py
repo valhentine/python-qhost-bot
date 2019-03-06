@@ -155,7 +155,51 @@ async def on_message(message):
                 msg = 'Player file does not exist at ' + command[1]
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
-            #print(changePlayer(command[1], command[2], command[3]))
+        elif message.content.startswith('!grow'):
+            command = message.content
+            command = command.split()
+            if len(command) < 3:
+                growth = '1.0'
+            else:
+                growth = str(command[2])
+
+            if os.path.isfile(playersDir + command[1] + ".json"):
+                if changePlayer(command[1], "Growth", growth):
+                    changePlayer(command[1], "Hunger", "99999")
+                    changePlayer(command[1], "Thirst", "99999")
+                    changePlayer(command[1], "Stamina", "99999")
+                    changePlayer(command[1], "Health", "99999")
+
+                    steamID = str(command[1])
+                    msg = '{0.author.mention} | '
+                    msg = msg + 'Player **'
+                    msg = msg + steamID
+                    msg = msg + '** growth set to **' + growth + '**'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Player file does not exist at ' + command[1]
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!dino'):
+            command = message.content
+            command = command.split()
+            if os.path.isfile(playersDir + command[1] + ".json"):
+                dino = str(command[2])
+                if changePlayer(command[1], "CharacterClass", dino):
+                    dino = dino + ";"
+                    if changePlayer(command[1], "UnlockedCharacters", dino):
+                        steamID = str(command[1])
+                        msg = '{0.author.mention} | '
+                        msg = msg + 'Player **'
+                        msg = msg + steamID
+                        msg = msg + '** dino set to **' + dino + '**'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+            else:
+                msg = 'Player file does not exist at ' + command[1]
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
 
     elif str(message.channel) == 'admin':
         pass
