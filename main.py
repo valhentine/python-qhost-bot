@@ -169,6 +169,7 @@ async def on_message(message):
                     changePlayer(command[1], "Thirst", "99999")
                     changePlayer(command[1], "Stamina", "99999")
                     changePlayer(command[1], "Health", "99999")
+                    changePlayer(command[1], "UnlockedCharacters", "")
 
                     steamID = str(command[1])
                     msg = '{0.author.mention} | '
@@ -187,8 +188,7 @@ async def on_message(message):
             if os.path.isfile(playersDir + command[1] + ".json"):
                 dino = str(command[2])
                 if changePlayer(command[1], "CharacterClass", dino):
-                    dino = dino + ";"
-                    if changePlayer(command[1], "UnlockedCharacters", dino):
+                    if changePlayer(command[1], "UnlockedCharacters", ""):
                         steamID = str(command[1])
                         msg = '{0.author.mention} | '
                         msg = msg + 'Player **'
