@@ -53,6 +53,18 @@ def getPlayer(steamID):
         with open(playersDir + steamID + ".json") as f:
             data = json.load(f)
         return(data)
+        f.close()
+    else:
+        return False
+
+def changePlayer(steamID, key, value):
+    player = getPlayer(steamID)
+    if os.path.isfile(playersDir + steamID + ".json"):
+        player[key] = value
+        with open(playersDir + steamID + ".json", 'w') as f:
+            json.dump(player, f)
+        f.close()
+        return True
     else:
         return False
 
@@ -127,6 +139,10 @@ async def on_message(message):
                 msg = 'Player file does not exist at ' + command[1]
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
+        elif message.content.startswith('!beta'):
+            command = message.content
+            command = command.split()
+            print(changePlayer(command[1], command[2], command[3]))
 
     elif str(message.channel) == 'admin':
         pass
