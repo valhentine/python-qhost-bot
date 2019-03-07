@@ -69,6 +69,17 @@ def changePlayer(steamID, key, value):
     else:
         return False
 
+def getPlayers():
+    with open('points.json') as json_file:
+        players = json.load(json_file)
+        return players
+
+def savePlayers(players):
+    with open('points.json', 'w') as json_file:  
+        json.dump(players, json_file)
+
+players = getPlayers()
+
 
 @client.event
 async def on_message(message):
@@ -234,6 +245,89 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
 
 
+    elif str(message.channel) == 'sapphire-isle-pointshop':
+        print(message.content)
+        command = message.content
+        command = command.split()
+        players = getPlayers()
+        if message.content.startswith('!points'):
+            if len(command) == 1:
+                plyID = message.author.id
+            elif len(command) == 2:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+            found = 0
+            for ply in players:
+                    if ply['discordID'] == plyID:
+                        msg = '<@' + plyID + '>'
+                        msg = msg + ', you have **' + ply['points'] + '** points.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                        found = 1
+            if not found:
+                msg = '<@' + plyID + '>'
+                msg = msg + ', you do not have a pointshop account.'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!register'):
+            if not len(command) == 2:
+                msg = 'Please use !register **SteamID64**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = message.author.id
+                steamID = command[1]
+                found = False
+                for ply in players:
+                    if steamID == ply['steamID']:
+                        found = True
+                        msg = 'SteamID already registered to <@' + ply['discordID'] + '>.' 
+                        await client.send_message(message.channel, msg)
+                if not found:
+                    for ply in players:
+                        if plyID == ply['discordID']:
+                            found = True
+                            msg = '<@' + ply['discordID'] + '>, you already have an account with the SteamID **' + ply['steamID'] + '**.' 
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        newPlayer = {
+                            'discordID': plyID,
+                            'steamID': steamID,
+                            'points': '0'
+                        }
+                        players.insert(0, newPlayer)
+                        savePlayers(players)
+                        msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+        elif message.content.startswith('!lookup'):
+            if not len(command) == 2:
+                msg = 'Please use !lookup **@discordName**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                
+                found = False
+                for ply in players:
+                    if plyID == ply['discordID']:
+                        found = True
+                        msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '**.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                if not found:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+
+
+                        
+            
     elif str(message.channel) == 'admin':
         pass
 
@@ -245,6 +339,3 @@ async def on_ready():
     print('------')
 
 client.run(TOKEN)
-
-urllib.request.urlretrieve('ftp://JuicyJuiceNV:JuIcEJuiCy$4567@144.48.104.226:8821/144.48.104.226_14010/TheIsle/Saved/Databases/Survival/Players/', 'file')
-urllib.request.urlretrieve('ftp://JuicyJuiceNV:JuIcEJuiCy$4567@144.48.104.226:8821/144.48.104.226_14010/TheIsle/Saved/Databases/Survival/Players/76561197963350619.json', 'file')
