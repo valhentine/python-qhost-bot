@@ -485,7 +485,7 @@ async def on_message(message):
                         newPlayer = {
                             'discordID': plyID,
                             'steamID': steamID,
-                            'points': '0'
+                            'points': '250'
                         }
                         players.insert(0, newPlayer)
                         savePlayers(players)
@@ -526,6 +526,45 @@ async def on_message(message):
                             msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** fossils to <@' + ply['discordID'] + '>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
+    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-applications':
+        command = message.content
+        command = command.split()
+        players = getPlayers()
+        if message.content.startswith('!register'):
+            if not len(command) == 2:
+                msg = 'Please use !register **SteamID64**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = message.author.id
+                steamID = command[1]
+                found = False
+                for ply in players:
+                    if steamID == ply['steamID']:
+                        found = True
+                        msg = 'SteamID already registered to <@' + ply['discordID'] + '>.' 
+                        await client.send_message(message.channel, msg)
+                if not found:
+                    for ply in players:
+                        if plyID == ply['discordID']:
+                            found = True
+                            msg = '<@' + ply['discordID'] + '>, you already have an account with the SteamID **' + ply['steamID'] + '**.' 
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        newPlayer = {
+                            'discordID': plyID,
+                            'steamID': steamID,
+                            'points': '250'
+                        }
+                        players.insert(0, newPlayer)
+                        savePlayers(players)
+                        role = discord.utils.get(message.server.roles, name='Members')
+                        await client.add_roles(message.author, role)
+                        msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+            
+
 
 
                         
