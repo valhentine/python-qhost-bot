@@ -78,6 +78,18 @@ def savePlayers(players):
     with open('points.json', 'w') as json_file:  
         json.dump(players, json_file)
 
+def checkSteamID(steamID, players):
+    for ply in players:
+        if steamID == ply['steamID']:
+            return ply
+    return False
+
+def checkDiscordID(discordID, players):
+    for ply in players:
+        if discordID == ply['discordID']:
+            return ply
+    return False
+
 players = getPlayers()
 
 
@@ -245,7 +257,7 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
 
 
-    elif str(message.channel) == 'sapphire-isle-pointshop':
+    elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'pointshop-admin':
         print(message.content)
         command = message.content
         command = command.split()
@@ -262,7 +274,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** points.'
+                        msg = msg + ', you have **' + ply['points'] + '** fossils.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -317,13 +329,209 @@ async def on_message(message):
                 for ply in players:
                     if plyID == ply['discordID']:
                         found = True
-                        msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '**.'
+                        msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                 if not found:
                     msg = str(command[1]) + ' Does not have a pointshop account.'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
+        elif message.content.startswith('!assign'):
+            if not len(command) == 3:
+                msg = 'Please use !assign **@discordName SteamID64**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                steamID = str(command[2])
+
+                found = checkSteamID(steamID, players)
+                if found:
+                    msg = 'SteamID already assigned to <@' + found['discordID'] + '>.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    found = False
+                    for ply in players:
+                        if plyID == ply['discordID']:
+                            found = True
+                            ply['steamID'] = steamID
+                            savePlayers(players)
+                            msg = plyID = str(command[1]) + ' now has the SteamID **' + ply['steamID'] + '**.'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+        elif message.content.startswith('!setpoints'):
+            if len(command) == 3:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                found = checkDiscordID(plyID, players)
+                if found:
+                    found['points'] = command[2]
+                    savePlayers(players)
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** fossils.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Please use !setpoints **@discordName fossils**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!addpoints'):
+            if len(command) == 3:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                found = checkDiscordID(plyID, players)
+                if found:
+                    found['points'] = str(int(found['points']) + int(command[2]))
+                    savePlayers(players)
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** fossils.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Please use !addpoints **@discordName fossils**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!removepoints') or message.content.startswith('!yoinkpoints'):
+            if len(command) == 3:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                found = checkDiscordID(plyID, players)
+                if found:
+                    if int(found['points']) - int(command[2]) > 0:
+                        found['points'] = str(int(found['points']) - int(command[2]))
+                        savePlayers(players)
+                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** fossils.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                    else:
+                        msg = str(command[1]) + ' does not have enough fossils for that transaction.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                else:
+                    msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Please use !removepoints **@discordName fossils**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+    elif str(message.channel) == 'sapphire-isle-pointshop-user' or str(message.channel) == 'pointshop':   
+        print(message.content)
+        command = message.content
+        command = command.split()
+        players = getPlayers()
+        if message.content.startswith('!points'):
+            if len(command) == 1:
+                plyID = message.author.id
+            elif len(command) == 2:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+            found = 0
+            for ply in players:
+                    if ply['discordID'] == plyID:
+                        msg = '<@' + plyID + '>'
+                        msg = msg + ', you have **' + ply['points'] + '** fossils.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                        found = 1
+            if not found:
+                msg = '<@' + plyID + '>'
+                msg = msg + ', you do not have a pointshop account.'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!register'):
+            if not len(command) == 2:
+                msg = 'Please use !register **SteamID64**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = message.author.id
+                steamID = command[1]
+                found = False
+                for ply in players:
+                    if steamID == ply['steamID']:
+                        found = True
+                        msg = 'SteamID already registered to <@' + ply['discordID'] + '>.' 
+                        await client.send_message(message.channel, msg)
+                if not found:
+                    for ply in players:
+                        if plyID == ply['discordID']:
+                            found = True
+                            msg = '<@' + ply['discordID'] + '>, you already have an account with the SteamID **' + ply['steamID'] + '**.' 
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        newPlayer = {
+                            'discordID': plyID,
+                            'steamID': steamID,
+                            'points': '0'
+                        }
+                        players.insert(0, newPlayer)
+                        savePlayers(players)
+                        msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+        elif message.content.startswith('!transfer'):
+            if not len(command) == 3:
+                msg = 'Please use !transfer **@username fossils**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                if not checkDiscordID(message.author.id, players):
+                    msg = '<@' + plyID + '>'
+                    msg = msg + ', you do not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    plyID = str(command[1])
+                    plyID = plyID[1:]
+                    plyID = plyID[1:]
+                    plyID = plyID[:-1]
+                    ply = checkDiscordID(plyID, players)
+                    if not ply:
+                        msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                    else:
+                        initPly = checkDiscordID(message.author.id, players)
+                        if int(initPly['points']) - int(command[2]) < 0:
+                            msg = '<@' + message.author.id + '>' + ', you do not have enough fossils for this transaction.'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+                        else:
+                            initPly['points'] = str(int(initPly['points']) - int(command[2]))
+                            ply['points'] = str(int(ply['points']) + int(command[2]))
+                            savePlayers(players)
+                            msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** fossils to <@' + ply['discordID'] + '>'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+
+
+                        
+
+
+
 
 
                         
