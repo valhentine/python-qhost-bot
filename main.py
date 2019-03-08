@@ -369,7 +369,6 @@ async def on_message(message):
                             msg = str(command[1]) + ' Dino set to ' + dino
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
-
         elif message.content.startswith('!lookup'):
             if not len(command) == 2:
                 msg = 'Please use !lookup **@discordName** OR !lookup **SteamID**'
@@ -386,7 +385,12 @@ async def on_message(message):
                     for ply in players:
                         if plyID == ply['discordID']:
                             found = True
-                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.'
+                            player = getPlayer(ply['steamID'])
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.\n'
+                            msg = msg + '```'
+                            for key, value in player.items():
+                                msg = msg + str(key) + ' : ' + str(value) + '\n'
+                            msg = msg + '```'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                     if not found:
@@ -399,11 +403,37 @@ async def on_message(message):
                     for ply in players:
                         if steamID == ply['steamID']:
                             found = True
-                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.'
+                            player = getPlayer(ply['steamID'])
+                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.\n'
+                            msg = msg + '```'
+                            for key, value in player.items():
+                                msg = msg + str(key) + ' : ' + str(value) + '\n'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                     if not found:
                         msg = str(command[1]) + ' Does not have a pointshop account.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+        elif message.content.startswith('!edit'):
+            if not len(command) == 4:
+                msg = 'Please use !edit **@discordName** **Trait** **NewValue**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = ply['steamID']
+                    if changePlayer(steamID, command[2], command[3]):
+                        msg = 'Player file <@' + ply['discordID'] + '> ' + command[2] + ' is now ' + command[3] + '.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
         elif message.content.startswith('!assign'):
