@@ -408,6 +408,7 @@ async def on_message(message):
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
+                            msg = msg + '```'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                     if not found:
