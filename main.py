@@ -13,6 +13,7 @@ def killServer():
     os.system('taskkill /F /FI "WindowTitle eq Administrator:  qHost Isle Server" /T')
 
 def startServer():
+    killServer()
     os.system('start cmd /c ' + directory + '\start.bat')
 
 def updateServer():
@@ -257,7 +258,7 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
 
 
-    elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'pointshop-admin': #pointshop-admin
+    elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'shop-admin': #shop-admin
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -273,7 +274,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** fossils.'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -313,6 +314,34 @@ async def on_message(message):
                         msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
+        elif message.content.startswith('!gender') or message.content.startswith('!transition'):
+            if not len(command) == 3:
+                msg = 'Please use !gender **@discordName male/female**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                gender = False
+                if command[2].lower() == 'male' or command[2].lower() == 'm':
+                    gender = 'False'
+                elif command[2].lower() == 'female' or command[2].lower() == 'f':
+                    gender = 'True'
+                else:
+                    msg = 'Please use !gender **@discordName male/female**'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                if gender:
+                    plyID = str(command[1])
+                    plyID = plyID[1:]
+                    plyID = plyID[1:]
+                    plyID = plyID[:-1]
+                    ply = checkDiscordID(plyID, players)
+                    steamID = ply['steamID']
+                    if changePlayer(steamID, "bGender", gender):
+                        msg = str(command[1]) + ' Gender set to ' + gender
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+
+
         elif message.content.startswith('!grow'):
             growth = False
             if len(command) == 2:
@@ -386,7 +415,7 @@ async def on_message(message):
                         if plyID == ply['discordID']:
                             found = True
                             player = getPlayer(ply['steamID'])
-                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.\n'
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>.\n'
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
@@ -404,7 +433,7 @@ async def on_message(message):
                         if steamID == ply['steamID']:
                             found = True
                             player = getPlayer(ply['steamID'])
-                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.\n'
+                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>.\n'
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
@@ -478,7 +507,7 @@ async def on_message(message):
                 if found:
                     found['points'] = command[2]
                     savePlayers(players)
-                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** fossils.'
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>.'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                 else:
@@ -486,7 +515,7 @@ async def on_message(message):
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
             else:
-                msg = 'Please use !setpoints **@discordName fossils**'
+                msg = 'Please use !setpoints **@discordName amount**'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
         elif message.content.startswith('!addpoints'):
@@ -499,7 +528,7 @@ async def on_message(message):
                 if found:
                     found['points'] = str(int(found['points']) + int(command[2]))
                     savePlayers(players)
-                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** fossils.'
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>.'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                 else:
@@ -507,7 +536,7 @@ async def on_message(message):
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
             else:
-                msg = 'Please use !addpoints **@discordName fossils**'
+                msg = 'Please use !addpoints **@discordName amount**'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
         elif message.content.startswith('!removepoints') or message.content.startswith('!yoinkpoints'):
@@ -521,11 +550,11 @@ async def on_message(message):
                     if int(found['points']) - int(command[2]) > 0:
                         found['points'] = str(int(found['points']) - int(command[2]))
                         savePlayers(players)
-                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** fossils.'
+                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                     else:
-                        msg = str(command[1]) + ' does not have enough fossils for that transaction.'
+                        msg = str(command[1]) + ' does not have enough <:fossil:553667525775327265> for that transaction.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                 else:
@@ -533,10 +562,10 @@ async def on_message(message):
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
             else:
-                msg = 'Please use !removepoints **@discordName fossils**'
+                msg = 'Please use !removepoints **@discordName amount**'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'sapphire-isle-pointshop-user' or str(message.channel) == 'pointshop':   #pointshop
+    elif str(message.channel) == 'sapphire-isle-pointshop-user' or str(message.channel) == 'shop-points':   #shop-points
         print(message.content)
         command = message.content
         command = command.split()
@@ -553,7 +582,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** fossils.'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -595,7 +624,7 @@ async def on_message(message):
                         await client.send_message(message.channel, msg)
         elif message.content.startswith('!transfer'):
             if not len(command) == 3:
-                msg = 'Please use !transfer **@username fossils**'
+                msg = 'Please use !transfer **@username amount**'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
             else:
@@ -617,14 +646,14 @@ async def on_message(message):
                     else:
                         initPly = checkDiscordID(message.author.id, players)
                         if int(initPly['points']) - int(command[2]) < 0:
-                            msg = '<@' + message.author.id + '>' + ', you do not have enough fossils for this transaction.'
+                            msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction.'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                         else:
                             initPly['points'] = str(int(initPly['points']) - int(command[2]))
                             ply['points'] = str(int(ply['points']) + int(command[2]))
                             savePlayers(players)
-                            msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** fossils to <@' + ply['discordID'] + '>'
+                            msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** <:fossil:553667525775327265> to <@' + ply['discordID'] + '>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
     elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-registration':  #role-registration
