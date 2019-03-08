@@ -103,7 +103,7 @@ async def on_message(message):
         msg = msg + ' {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
-    if str(message.channel) == 'sapphire-isle' or str(message.channel) == 'main-server-box':
+    if str(message.channel) == 'sapphire-isle' or str(message.channel) == 'main-server-box': #main-server-box
         if message.content.startswith('!help') or message.content.startswith('!commands'):
             msg = 'Please visit the server-box-control-guide text channel'
             msg = msg + ''.format(message)
@@ -257,7 +257,7 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
 
 
-    elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'pointshop-admin':
+    elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'pointshop-admin': #pointshop-admin
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -311,6 +311,38 @@ async def on_message(message):
                         players.insert(0, newPlayer)
                         savePlayers(players)
                         msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+        elif message.content.startswith('!grow'):
+            growth = False
+            if len(command) == 2:
+                growth = '1.0'
+            elif len(command) == 3:
+                growth = str(command[2])
+            else:
+                msg = 'Please use !grow **@discordName** **growthLevel**(optional)'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            if growth:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = ply['steamID']
+                    if changePlayer(steamID, "Growth", growth):
+                        changePlayer(steamID, "Hunger", "99999")
+                        changePlayer(steamID, "Thirst", "99999")
+                        changePlayer(steamID, "Stamina", "99999")
+                        changePlayer(steamID, "Health", "99999")
+                        changePlayer(steamID, "UnlockedCharacters", "")
+                        msg = str(command[1]) + ' Growth set to ' + growth
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
         elif message.content.startswith('!lookup'):
@@ -448,7 +480,7 @@ async def on_message(message):
                 msg = 'Please use !removepoints **@discordName fossils**'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'sapphire-isle-pointshop-user' or str(message.channel) == 'pointshop':   
+    elif str(message.channel) == 'sapphire-isle-pointshop-user' or str(message.channel) == 'pointshop':   #pointshop
         print(message.content)
         command = message.content
         command = command.split()
@@ -539,7 +571,7 @@ async def on_message(message):
                             msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** fossils to <@' + ply['discordID'] + '>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-registration':
+    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-registration':  #role-registration
         command = message.content
         command = command.split()
         players = getPlayers()
