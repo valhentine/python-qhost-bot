@@ -316,26 +316,40 @@ async def on_message(message):
                         await client.send_message(message.channel, msg)
         elif message.content.startswith('!lookup'):
             if not len(command) == 2:
-                msg = 'Please use !lookup **@discordName**'
+                msg = 'Please use !lookup **@discordName** OR !lookup **SteamID**'
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
             else:
-                plyID = str(command[1])
-                plyID = plyID[1:]
-                plyID = plyID[1:]
-                plyID = plyID[:-1]
-                
-                found = False
-                for ply in players:
-                    if plyID == ply['discordID']:
-                        found = True
-                        msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.'
+                if command[1][0] == '<':
+                    plyID = str(command[1])
+                    plyID = plyID[1:]
+                    plyID = plyID[1:]
+                    plyID = plyID[:-1]
+                    
+                    found = False
+                    for ply in players:
+                        if plyID == ply['discordID']:
+                            found = True
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        msg = str(command[1]) + ' Does not have a pointshop account.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
-                if not found:
-                    msg = str(command[1]) + ' Does not have a pointshop account.'
-                    msg = msg.format(message)
-                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = str(command[1])
+                    found = False
+                    for ply in players:
+                        if steamID == ply['steamID']:
+                            found = True
+                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** fossils.'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        msg = str(command[1]) + ' Does not have a pointshop account.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
         elif message.content.startswith('!assign'):
             if not len(command) == 3:
                 msg = 'Please use !assign **@discordName SteamID64**'
@@ -563,7 +577,6 @@ async def on_message(message):
                         msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
-            
 
 
 
