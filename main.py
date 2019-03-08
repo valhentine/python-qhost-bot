@@ -258,7 +258,6 @@ async def on_message(message):
 
 
     elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'pointshop-admin':
-        print(message.content)
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -540,7 +539,7 @@ async def on_message(message):
                             msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** fossils to <@' + ply['discordID'] + '>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-applications':
+    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-registration':
         command = message.content
         command = command.split()
         players = getPlayers()
