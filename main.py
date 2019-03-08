@@ -345,6 +345,31 @@ async def on_message(message):
                         msg = str(command[1]) + ' Growth set to ' + growth
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
+        elif message.content.startswith('!dino'):
+            if not len(command) == 3:
+                msg = 'Please use !dino **@discordName** **DinoName**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = ply['steamID']
+                    dino = str(command[2])
+                    if changePlayer(steamID, "CharacterClass", dino):
+                        if changePlayer(steamID, "UnlockedCharacters", ""):
+                            msg = str(command[1]) + ' Dino set to ' + dino
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+
         elif message.content.startswith('!lookup'):
             if not len(command) == 2:
                 msg = 'Please use !lookup **@discordName** OR !lookup **SteamID**'
