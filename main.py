@@ -8,6 +8,7 @@ TOKEN = 'NTUwODU1MTUxODkyNjkyOTky.D1ovfA._13Nmqjkh01I_Q9b8I_wPX9mtBA'
 client = discord.Client()
 directory = "D:\servers\sapphire\isle"
 playersDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players\\'
+dinosDir = 'D:\qhost-bot\dinos\\'
 
 def killServer():
     os.system('taskkill /F /FI "WindowTitle eq Administrator:  qHost Isle Server" /T')
@@ -70,6 +71,15 @@ def changePlayer(steamID, key, value):
     else:
         return False
 
+def verifyExists(steamID):
+    if not os.path.isfile(playersDir + steamID + ".json"):
+        with open(dinosDir + 'default.json') as f:
+            default = json.load(f)
+        f.close()
+        with open(playersDir + steamID + ".json", 'w') as f:
+            json.dump(default, f)
+        f.close()
+
 def getPlayers():
     with open('points.json') as json_file:
         players = json.load(json_file)
@@ -82,12 +92,14 @@ def savePlayers(players):
 def checkSteamID(steamID, players):
     for ply in players:
         if steamID == ply['steamID']:
+            verifyExists(steamID)
             return ply
     return False
 
 def checkDiscordID(discordID, players):
     for ply in players:
         if discordID == ply['discordID']:
+            verifyExists(ply['steamID'])
             return ply
     return False
 
@@ -143,6 +155,20 @@ async def on_message(message):
             
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
+        elif message.content.startswith('!stats'):
+            pDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players'
+            onlyfiles = next(os.walk(pDir))[2]
+            joinedCount = str(len(onlyfiles))
+            players = getPlayers()
+            plyCount = 0
+            for ply in players:
+                plyCount = plyCount + 1
+            registerRate = str(round(plyCount / int(joinedCount) * 100))
+            msg = 'Registered Discord Users: **' + str(plyCount) + '**\nUnique Players To Join Server: **' + joinedCount + '**\n'
+            msg = msg + 'That is a register rate of **' + registerRate + '**%'
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+            
         elif message.content.startswith('!getplayer'):
             command = message.content
             command = command.split()
@@ -374,6 +400,33 @@ async def on_message(message):
                         msg = str(command[1]) + ' Growth set to ' + growth
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
+        elif message.content.startswith('!skin'):
+            if not len(command) == 9:
+                msg = 'Please use !skin **@discordName** **1 2 3 4 5 6 7**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = ply['steamID']
+                    if changePlayer(steamID, "SkinPaletteSection1", command[2]):
+                        if changePlayer(steamID, "SkinPaletteSection2", command[3]):
+                            if changePlayer(steamID, "SkinPaletteSection3", command[4]):
+                                if changePlayer(steamID, "SkinPaletteSection4", command[5]):
+                                    if changePlayer(steamID, "SkinPaletteSection6", command[7]):
+                                        if changePlayer(steamID, "SkinPaletteVariation", command[8]):
+                                            msg = str(command[1]) + ' Skin edited.'
+                                            msg = msg.format(message)
+                                            await client.send_message(message.channel, msg)
         elif message.content.startswith('!dino'):
             if not len(command) == 3:
                 msg = 'Please use !dino **@discordName** **DinoName**'
@@ -398,7 +451,7 @@ async def on_message(message):
                             msg = str(command[1]) + ' Dino set to ' + dino
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
-        elif message.content.startswith('!lookup'):
+        elif message.content.startswith('!lookup') or message.content.startswith('!getplayer'):
             if not len(command) == 2:
                 msg = 'Please use !lookup **@discordName** OR !lookup **SteamID**'
                 msg = msg.format(message)
@@ -409,10 +462,11 @@ async def on_message(message):
                     plyID = plyID[1:]
                     plyID = plyID[1:]
                     plyID = plyID[:-1]
-                    
+
                     found = False
                     for ply in players:
                         if plyID == ply['discordID']:
+                            verifyExists(ply['steamID'])
                             found = True
                             player = getPlayer(ply['steamID'])
                             msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>.\n'
