@@ -142,7 +142,6 @@ def checkDinoPrice(name):
 dinoNameDict = {
     'spino': 'Spino',
     'rex': 'RexAdultS',
-    'trex': 'RexAdultS',
     'giga': 'GigaAdultS',
     'acro': 'Acro',
     'alberto': 'Albert',
@@ -874,7 +873,9 @@ async def on_message(message):
                 msg = msg.format(message)
                 await client.send_message(message.channel, msg)
         elif message.content.startswith('!purchase'):
-            if command[1].lower() == 'gender' or command[1].lower() == 'genderswap':
+            if len(command) == 1:
+                command.append('')
+            if command[1] == 'gender' or command[1] == 'genderswap':
                 plyID = message.author.id
                 ply = checkDiscordID(plyID, players)
                 if not len(command) == 2:
@@ -916,16 +917,20 @@ async def on_message(message):
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                     return
-                dino = checkDinoName(command[1])
+                dino = checkDinoName(command[1].lower())
                 if dino:
                     if subtractPoints(plyID, checkDinoPrice(dino)):
                         plyFile = getPlayer(ply['steamID'])
                         if changePlayer(ply['steamID'], 'CharacterClass', dino):
                             changePlayer(ply['steamID'], 'UnlockedCharacters', '')
                             changePlayer(ply['steamID'], 'Growth', '1.0')
+                            changePlayer(ply['steamID'], "Hunger", "99999")
+                            changePlayer(ply['steamID'], "Thirst", "99999")
+                            changePlayer(ply['steamID'], "Stamina", "99999")
+                            changePlayer(ply['steamID'], "Health", "99999")
                             players = getPlayers()
                             ply = checkDiscordID(plyID, players)
-                            msg = '<@' + message.author.id + '>' + ', you have purchased **' + dino + '** You know have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                            msg = '<@' + message.author.id + '>' + ', you have purchased **' + dino + '** You now have **' + ply['points'] + '** <:fossil:553667525775327265>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                             return
@@ -935,10 +940,24 @@ async def on_message(message):
                         await client.send_message(message.channel, msg)
                         return
                 else:
-                    msg = 'Invalid dino: ' + command[1]
+                    msg = 'Invalid dino: **' + command[1] + '** please do !prices for a list of things you can purchase.'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                     return
+        elif message.content.startswith('!list'):
+            msg = 'Currently available purchases:\n'
+            dinos = []
+            prices = []
+            for key, value in dinoNameDict.items():
+                dinos.append(key)
+            for key, value in dinoPriceDict.items():
+                prices.append(value)
+            msg = msg + '\n 5 <:fossil:553667525775327265> | !purchase gender'
+            for i in range(0, len(dinos)):
+                msg = msg + '\n ' + prices[i] + ' <:fossil:553667525775327265> | !purchase ' + dinos[i]
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+
 
 
             
