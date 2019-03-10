@@ -127,6 +127,18 @@ def subtractPoints(discordID, points):
     else:
         return False
 
+def checkDinoName(name):
+    for dino, dinoName in dinoNameDict.items():
+        if name == dino:
+            return dinoName
+    return False
+
+def checkDinoPrice(name):
+    for dinoName, dinoPrice in dinoPriceDict.items():
+        if name == dinoName:
+            return dinoPrice
+    return False
+
 dinoNameDict = {
     'spino': 'Spino',
     'rex': 'RexAdultS',
@@ -871,6 +883,7 @@ async def on_message(message):
                     await client.send_message(message.channel, msg)
                     return
                 if subtractPoints(plyID, 10):
+                    verifyExists(ply['steamID'])
                     plyFile = getPlayer(ply['steamID'])
                     gender = str(plyFile['bGender'])
                     if gender == 'False':
@@ -893,14 +906,42 @@ async def on_message(message):
                     msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
-            if command[1].lower() == 'spino' or command[1].lower() == 'genderswap':
+            else:
                 plyID = message.author.id
                 ply = checkDiscordID(plyID, players)
+                verifyExists(ply['steamID'])
+                plyFile = getPlayer(ply['steamID'])
                 if not len(command) == 2:
-                    msg = 'Please use !purchase gender'
+                    msg = 'Please use !purchase dinoname'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                     return
+                dino = checkDinoName(command[1])
+                if dino:
+                    if subtractPoints(plyID, checkDinoPrice(dino)):
+                        plyFile = getPlayer(ply['steamID'])
+                        if changePlayer(ply['steamID'], 'CharacterClass', dino):
+                            changePlayer(ply['steamID'], 'UnlockedCharacters', '')
+                            changePlayer(ply['steamID'], 'Growth', '1.0')
+                            players = getPlayers()
+                            ply = checkDiscordID(plyID, players)
+                            msg = '<@' + message.author.id + '>' + ', you have purchased **' + dino + '** You know have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+                            return
+                    else:
+                        msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                        return
+                else:
+                    msg = 'Invalid dino: ' + command[1]
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                    return
+
+
+            
 
 
 
