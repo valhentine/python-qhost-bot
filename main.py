@@ -127,8 +127,68 @@ def subtractPoints(discordID, points):
     else:
         return False
 
-players = getPlayers()
+dinoNameDict = {
+    'spino': 'Spino',
+    'rex': 'RexAdultS',
+    'trex': 'RexAdultS',
+    'giga': 'GigaAdultS',
+    'acro': 'Acro',
+    'alberto': 'Albert',
+    'allo': 'AlloAdultS',
+    'carno': 'CarnoAdultS',
+    'sucho': 'SuchoAdultS',
+    'bary': 'Bary',
+    'cerato': 'CeratoAdultS',
+    'dilo': 'DiloAdultS',
+    'utah': 'UtahAdultS',
+    'austro': 'Austro',
+    'herrera': 'Herrera',
+    'shant': 'Shant',
+    'cama': 'Camara',
+    'trike': 'TrikeAdultS',
+    'para': 'ParaAdultS',
+    'maia': 'MaiaAdultS',
+    'dryo': 'Dryo',
+    'anky': 'Anky',
+    'pachy': 'Pachy',
+    'stego': 'Stego',
+    'ava': 'Ava',
+    'theri': 'Theri',
+    'pue': 'Puerta',
+    'diablo': 'DiabloAdultS'
+}
 
+dinoPriceDict = {
+    'Spino': '250',
+    'RexAdultS': '300',
+    'GigaAdultS': '300',
+    'Acro': '30',
+    'Albert': '24',
+    'AlloAdultS': '18',
+    'CarnoAdultS': '16',
+    'SuchoAdultS': '22',
+    'Bary': '14',
+    'CeratoAdultS': '20',
+    'DiloAdultS': '14',
+    'UtahAdultS': '26',
+    'Austro': '6',
+    'Herrera': '6',
+    'Shant': '60',
+    'Camara': '180',
+    'TrikeAdultS': '36',
+    'ParaAdultS': '22',
+    'MaiaAdultS': '14',
+    'Dryo': '4',
+    'Anky': '22',
+    'Pachy': '10',
+    'Stego': '22',
+    'Ava': '8',
+    'Theri': '26',
+    'Puerta': '50',
+    'DiabloAdultS': '18'
+}
+
+players = getPlayers()
 
 @client.event
 async def on_message(message):
@@ -833,6 +893,14 @@ async def on_message(message):
                     msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
+            if command[1].lower() == 'spino' or command[1].lower() == 'genderswap':
+                plyID = message.author.id
+                ply = checkDiscordID(plyID, players)
+                if not len(command) == 2:
+                    msg = 'Please use !purchase gender'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                    return
 
 
 
