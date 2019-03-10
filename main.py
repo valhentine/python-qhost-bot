@@ -493,7 +493,7 @@ async def on_message(message):
                             verifyExists(ply['steamID'])
                             found = True
                             player = getPlayer(ply['steamID'])
-                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n'
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
@@ -511,7 +511,7 @@ async def on_message(message):
                         if steamID == ply['steamID']:
                             found = True
                             player = getPlayer(ply['steamID'])
-                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n'
+                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
