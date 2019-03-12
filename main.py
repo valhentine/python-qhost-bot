@@ -592,6 +592,14 @@ async def on_message(message):
                     plyID = plyID[1:]
                     plyID = plyID[:-1]
 
+                    warnings = getWarnings(plyID)
+                    warnString = 'None'
+                    if warnings:
+                        warnString = '```'
+                        for warning in warnings:
+                            warnString = warnString + warning + '\n'
+                        warnString = warnString + '```'
+
                     found = False
                     for ply in players:
                         if plyID == ply['discordID']:
@@ -599,6 +607,7 @@ async def on_message(message):
                             found = True
                             player = getPlayer(ply['steamID'])
                             msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
+                            msg = msg + 'Warnings: ' + warnString
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
@@ -616,7 +625,17 @@ async def on_message(message):
                         if steamID == ply['steamID']:
                             found = True
                             player = getPlayer(ply['steamID'])
+
+                            warnings = getWarnings(ply['discordID'])
+                            warnString = 'None'
+                            if warnings:
+                                warnString = '```'
+                                for warning in warnings:
+                                    warnString = warnString + warning + '\n'
+                                warnString = warnString + '```'
+
                             msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
+                            msg = msg + 'Warnings: ' + warnString
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
