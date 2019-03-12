@@ -963,24 +963,129 @@ async def on_message(message):
                         extra = '  '
                 msg = msg + '\n ' + prices[i] + extra + ' <:fossil:553667525775327265> | !purchase ' + dinos[i]
             msg = msg.format(message)
-            await client.send_message(message.channel, msg)
+            await client.send_message(message.channel, msg)    
+    elif str(message.channel) == 'event-admin':
+        command = message.content
+        command = command.split()
+        players = getPlayers()
+        if message.content.startswith('!points'):
+            if len(command) == 1:
+                plyID = message.author.id
+            elif len(command) == 2:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+            found = 0
+            for ply in players:
+                    if ply['discordID'] == plyID:
+                        msg = '<@' + plyID + '>'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                        found = 1
+            if not found:
+                msg = '<@' + plyID + '>'
+                msg = msg + ', you do not have a pointshop account.'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!removepoints') or message.content.startswith('!yoinkpoints'):
+            if len(command) == 3:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                found = checkDiscordID(plyID, players)
+                if found:
+                    if int(found['points']) - int(command[2]) > 0:
+                        found['points'] = str(int(found['points']) - int(command[2]))
+                        savePlayers(players)
+                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                    else:
+                        msg = str(command[1]) + ' does not have enough <:fossil:553667525775327265> for that transaction.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                else:
+                    msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Please use !removepoints **@discordName amount**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!addpoints'):
+            if len(command) == 3:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                found = checkDiscordID(plyID, players)
+                if found:
+                    found['points'] = str(int(found['points']) + int(command[2]))
+                    savePlayers(players)
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Please use !addpoints **@discordName amount**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!setpoints'):
+            if len(command) == 3:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                found = checkDiscordID(plyID, players)
+                if found:
+                    found['points'] = command[2]
+                    savePlayers(players)
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    msg = plyID = str(command[1]) + ' does not have a pointshop account'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+            else:
+                msg = 'Please use !setpoints **@discordName amount**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+        elif message.content.startswith('!lookup') or message.content.startswith('!getplayer'):
+            if not len(command) == 2:
+                msg = 'Please use !lookup **@discordName** OR !lookup **SteamID**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                if command[1][0] == '<':
+                    plyID = str(command[1])
+                    plyID = plyID[1:]
+                    plyID = plyID[1:]
+                    plyID = plyID[:-1]
 
-
-
-            
-
-
-
-                        
-
-
-
-
-
-                        
-            
-    elif str(message.channel) == 'admin':
-        pass
+                    found = False
+                    for ply in players:
+                        if plyID == ply['discordID']:
+                            verifyExists(ply['steamID'])
+                            found = True
+                            player = getPlayer(ply['steamID'])
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
+                            msg = msg + '```'
+                            for key, value in player.items():
+                                msg = msg + str(key) + ' : ' + str(value) + '\n'
+                            msg = msg + '```'
+                            msg = msg.format(message)
+                            await client.send_message(message.channel, msg)
+                    if not found:
+                        msg = str(command[1]) + ' Does not have a pointshop account.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
 
 @client.event
 async def on_ready():
