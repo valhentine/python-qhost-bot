@@ -143,6 +143,38 @@ def checkDinoPrice(name):
             return dinoPrice
     return False
 
+def loadWarnings():
+    with open('warnings.json') as f:
+        return json.load(f)
+
+
+def saveWarnings(warnings):
+    warningsFile = open('warnings.json', 'w')
+    warningsJSON = json.dumps(warnings)
+    warningsJSON = json.loads(warningsJSON)
+    warningsFile.write(json.dumps(warningsJSON, indent=4, sort_keys=True))
+    warningsFile.close()
+
+def getWarnings(discordID):
+    warnings = loadWarnings()
+    if discordID in warnings:
+        return warnings['discordID']
+    else:
+        return False
+
+def addWarning(discordID, warning):
+    warnings = loadWarnings()
+    if getWarnings(discordID):
+        warns = warnings[discordID]
+        warns.append(warning)
+        warnings[discordID] = warns
+        saveWarnings(warnings)
+    else:
+        warns = []
+        warns.append(warning)
+        warnings[discordID] = warns
+        saveWarnings(warnings)
+
 dinoNameDict = {
     'spino': 'Spino',
     'rex': 'RexAdultS',
