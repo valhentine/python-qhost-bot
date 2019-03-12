@@ -942,7 +942,7 @@ async def on_message(message):
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                     return
-        elif message.content.startswith('!list'):
+        elif message.content.startswith('!list') or message.content.startswith('!prices'):
             msg = 'Currently available purchases:\n'
             dinos = []
             prices = []
@@ -950,9 +950,14 @@ async def on_message(message):
                 dinos.append(key)
             for key, value in dinoPriceDict.items():
                 prices.append(value)
-            msg = msg + '\n 5 <:fossil:553667525775327265> | !purchase gender'
+            msg = msg + '\n 5   <:fossil:553667525775327265> | !purchase gender'
             for i in range(0, len(dinos)):
-                msg = msg + '\n ' + prices[i] + ' <:fossil:553667525775327265> | !purchase ' + dinos[i]
+                extra = ''
+                if int(prices[i]) < 100:
+                    extra = ' '
+                    if int(prices[i]) < 10:
+                        extra = '  '
+                msg = msg + '\n ' + prices[i] + extra + ' <:fossil:553667525775327265> | !purchase ' + dinos[i]
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
 
