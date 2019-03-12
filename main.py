@@ -158,7 +158,7 @@ def saveWarnings(warnings):
 def getWarnings(discordID):
     warnings = loadWarnings()
     if discordID in warnings:
-        return warnings['discordID']
+        return warnings[discordID]
     else:
         return False
 
@@ -413,7 +413,7 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
 
 
-    elif str(message.channel) == 'sapphire-isle-pointshop' or str(message.channel) == 'shop-admin': #shop-admin
+    elif str(message.channel) == 'admin-commands' or str(message.channel) == 'shop-admin': #shop-admin
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -556,6 +556,35 @@ async def on_message(message):
                                             msg = str(command[1]) + ' Skin edited.'
                                             msg = msg.format(message)
                                             await client.send_message(message.channel, msg)
+        elif message.content.startswith('!warn'):
+            if len(command) < 3:
+                msg = 'Please use !warn **@discordName** **warning**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+                return
+            plyID = str(command[1])
+            plyID = plyID[1:]
+            plyID = plyID[1:]
+            plyID = plyID[:-1]
+
+            players = getPlayers()
+
+            if not checkDiscordID(plyID, players):
+                msg = 'Could not find player ' + command[1]
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+                return
+            
+            warning = ''
+
+            for i in range(2, len(command)):
+                warning = warning + command[i] + ' '
+            
+            addWarning(plyID, warning)
+            msg = 'Warned ' + command[1] + ' for ' + warning
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+
         elif message.content.startswith('!dino'):
             if not len(command) == 3:
                 msg = 'Please use !dino **@discordName** **DinoName**'
@@ -1005,7 +1034,7 @@ async def on_message(message):
                 dinos.append(key)
             for key, value in dinoPriceDict.items():
                 prices.append(value)
-            msg = msg + '\n 5   <:fossil:553667525775327265> | !purchase gender'
+            msg = msg + '\n 10   <:fossil:553667525775327265> | !purchase gender'
             for i in range(0, len(dinos)):
                 extra = ''
                 if int(prices[i]) < 100:
