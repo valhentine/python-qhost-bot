@@ -114,6 +114,10 @@ def hasPoints(discordID, points):
         return True
 
 def subtractPoints(discordID, points):
+    players = getPlayers()
+    ply = checkDiscordID(discordID, players)
+    if ply['points'] == 'admin':
+        return True
     if hasPoints(discordID, points):
         players = getPlayers()
         ply = checkDiscordID(discordID, players)
