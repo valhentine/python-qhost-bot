@@ -245,7 +245,7 @@ async def on_message(message):
         msg = msg + ' {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
-    if str(message.channel) == 'sapphire-isle' or str(message.channel) == 'main-server-box': #main-server-box
+    if str(message.channel) == 'sapphire-isle' or str(message.channel) == 'server-control': #main-server-box
         if message.content.startswith('!help') or message.content.startswith('!commands'):
             msg = 'Please visit the server-box-control-guide text channel'
             msg = msg + ''.format(message)
@@ -413,7 +413,7 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
 
 
-    elif str(message.channel) == 'admin-commands' or str(message.channel) == 'shop-admin': #shop-admin
+    elif str(message.channel) == 'admin-commands' or str(message.channel) == 'server-administration': #server-administration
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -886,7 +886,7 @@ async def on_message(message):
                             msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** <:fossil:553667525775327265> to <@' + ply['discordID'] + '>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'role-registration':  #role-registration
+    elif str(message.channel) == 'test-qbot' or str(message.channel) == 'member-registration':  #member-registration
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -923,7 +923,7 @@ async def on_message(message):
                         msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'shop-purchase-auto':  #shop-purchase-auto
+    elif str(message.channel) == 'purchasing-chat':  #shop-purchase-auto
         command = message.content
         command = command.split()
         players = getPlayers()
