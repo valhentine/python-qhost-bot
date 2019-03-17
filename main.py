@@ -429,7 +429,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -635,7 +635,7 @@ async def on_message(message):
                             verifyExists(ply['steamID'])
                             found = True
                             player = getPlayer(ply['steamID'])
-                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:556472990460805138>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
                             msg = msg + 'Warnings: ' + warnString
                             msg = msg + '```'
                             for key, value in player.items():
@@ -663,7 +663,7 @@ async def on_message(message):
                                     warnString = warnString + warning + '\n'
                                 warnString = warnString + '```'
 
-                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
+                            msg = '<@' + ply['discordID'] + '> has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:556472990460805138>\n profile: http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
                             msg = msg + 'Warnings: ' + warnString
                             msg = msg + '```'
                             for key, value in player.items():
@@ -738,7 +738,7 @@ async def on_message(message):
                 if found:
                     found['points'] = command[2]
                     savePlayers(players)
-                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:556472990460805138>'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                 else:
@@ -759,7 +759,7 @@ async def on_message(message):
                 if found:
                     found['points'] = str(int(found['points']) + int(command[2]))
                     savePlayers(players)
-                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:556472990460805138>'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                 else:
@@ -781,11 +781,11 @@ async def on_message(message):
                     if int(found['points']) - int(command[2]) > 0:
                         found['points'] = str(int(found['points']) - int(command[2]))
                         savePlayers(players)
-                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                     else:
-                        msg = str(command[1]) + ' does not have enough <:fossil:553667525775327265> for that transaction.'
+                        msg = str(command[1]) + ' does not have enough <:fossil:556472990460805138> for that transaction.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                 else:
@@ -812,7 +812,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -876,14 +876,14 @@ async def on_message(message):
                     else:
                         initPly = checkDiscordID(message.author.id, players)
                         if int(initPly['points']) - int(command[2]) < 0:
-                            msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction.'
+                            msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:556472990460805138> for this transaction.'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                         else:
                             initPly['points'] = str(int(initPly['points']) - int(command[2]))
                             ply['points'] = str(int(ply['points']) + int(command[2]))
                             savePlayers(players)
-                            msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** <:fossil:553667525775327265> to <@' + ply['discordID'] + '>'
+                            msg = '<@' + message.author.id + '>' + ', you have transfered **' + command[2] + '** <:fossil:556472990460805138> to <@' + ply['discordID'] + '>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
     elif str(message.channel) == 'test-qbot' or str(message.channel) == 'member-registration':  #member-registration
@@ -910,6 +910,8 @@ async def on_message(message):
                             found = True
                             msg = '<@' + ply['discordID'] + '>, you already have an account with the SteamID **' + ply['steamID'] + '**.' 
                             await client.send_message(message.channel, msg)
+                            role = discord.utils.get(message.server.roles, name='Member')
+                            await client.add_roles(message.author, role)
                     if not found:
                         newPlayer = {
                             'discordID': plyID,
@@ -918,12 +920,12 @@ async def on_message(message):
                         }
                         players.insert(0, newPlayer)
                         savePlayers(players)
-                        role = discord.utils.get(message.server.roles, name='Members')
+                        role = discord.utils.get(message.server.roles, name='Member')
                         await client.add_roles(message.author, role)
                         msg = '<@' + plyID + '>, You have successfully registered as SteamID 64 **' + steamID + '**.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
-    elif str(message.channel) == 'purchasing-chat':  #shop-purchase-auto
+    elif str(message.channel) == 'purchasing-chat':  #purchasing chat
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -945,7 +947,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -982,11 +984,11 @@ async def on_message(message):
                     if changePlayer(ply['steamID'], 'bGender', gender):
                         players = getPlayers()
                         ply = checkDiscordID(plyID, players)
-                        msg = '<@' + message.author.id + '>' + ', You have purchased a gender swap to **' + pGender + '**. You now have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                        msg = '<@' + message.author.id + '>' + ', You have purchased a gender swap to **' + pGender + '**. You now have **' + ply['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                 else:
-                    msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction'
+                    msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:556472990460805138> for this transaction'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
             else:
@@ -1012,12 +1014,12 @@ async def on_message(message):
                             changePlayer(ply['steamID'], "Health", "99999")
                             players = getPlayers()
                             ply = checkDiscordID(plyID, players)
-                            msg = '<@' + message.author.id + '>' + ', you have purchased **' + dino + '** You now have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                            msg = '<@' + message.author.id + '>' + ', you have purchased **' + dino + '** You now have **' + ply['points'] + '** <:fossil:556472990460805138>'
                             msg = msg.format(message)
                             await client.send_message(message.channel, msg)
                             return
                     else:
-                        msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:553667525775327265> for this transaction'
+                        msg = '<@' + message.author.id + '>' + ', you do not have enough <:fossil:556472990460805138> for this transaction'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         return
@@ -1034,17 +1036,17 @@ async def on_message(message):
                 dinos.append(key)
             for key, value in dinoPriceDict.items():
                 prices.append(value)
-            msg = msg + '\n 10   <:fossil:553667525775327265> | !purchase gender'
+            msg = msg + '\n 10   <:fossil:556472990460805138> | !purchase gender'
             for i in range(0, len(dinos)):
                 extra = ''
                 if int(prices[i]) < 100:
                     extra = ' '
                     if int(prices[i]) < 10:
                         extra = '  '
-                msg = msg + '\n ' + prices[i] + extra + ' <:fossil:553667525775327265> | !purchase ' + dinos[i]
+                msg = msg + '\n ' + prices[i] + extra + ' <:fossil:556472990460805138> | !purchase ' + dinos[i]
             msg = msg.format(message)
             await client.send_message(message.channel, msg)    
-    elif str(message.channel) == 'event-admin':
+    elif str(message.channel) == 'event-points':
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -1060,7 +1062,7 @@ async def on_message(message):
             for ply in players:
                     if ply['discordID'] == plyID:
                         msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:553667525775327265>'
+                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                         found = 1
@@ -1080,11 +1082,11 @@ async def on_message(message):
                     if int(found['points']) - int(command[2]) > 0:
                         found['points'] = str(int(found['points']) - int(command[2]))
                         savePlayers(players)
-                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                        msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:556472990460805138>'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                     else:
-                        msg = str(command[1]) + ' does not have enough <:fossil:553667525775327265> for that transaction.'
+                        msg = str(command[1]) + ' does not have enough <:fossil:556472990460805138> for that transaction.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
                 else:
@@ -1105,7 +1107,7 @@ async def on_message(message):
                 if found:
                     found['points'] = str(int(found['points']) + int(command[2]))
                     savePlayers(players)
-                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:556472990460805138>'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                 else:
@@ -1126,7 +1128,7 @@ async def on_message(message):
                 if found:
                     found['points'] = command[2]
                     savePlayers(players)
-                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:553667525775327265>'
+                    msg = plyID = str(command[1]) + ' now has **' + found['points'] + '** <:fossil:556472990460805138>'
                     msg = msg.format(message)
                     await client.send_message(message.channel, msg)
                 else:
@@ -1155,7 +1157,7 @@ async def on_message(message):
                             verifyExists(ply['steamID'])
                             found = True
                             player = getPlayer(ply['steamID'])
-                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:553667525775327265>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
+                            msg = plyID = str(command[1]) + ' has the SteamID **' + ply['steamID'] + '** and has **' + ply['points'] + '** <:fossil:556472990460805138>\n profile: 	http://steamcommunity.com/profiles/' + ply['steamID'] + '\n' 
                             msg = msg + '```'
                             for key, value in player.items():
                                 msg = msg + str(key) + ' : ' + str(value) + '\n'
