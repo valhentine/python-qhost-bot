@@ -80,6 +80,30 @@ def verifyExists(steamID):
             json.dump(default, f)
         f.close()
 
+def loadDino(dino, steamID):
+    verifyExists(steamID)
+    if not os.path.isfile(dinosDir + dino + '.json'):
+        return False
+    else:
+        with open(dinosDir + dino + '.json') as f:
+            dinoFile = json.load(f)
+        f.close()
+        with open(playersDir + steamID + ".json", 'w') as f:
+            json.dump(dinoFile, f)
+        f.close()
+        return True
+
+def saveDino(dino, steamID):
+    verifyExists(steamID)
+    with open(playersDir + steamID + ".json") as f:
+        dinoFile = json.load(f)
+    f.close()
+    with open(dinosDir + dino + '.json', 'w') as f:
+        json.dump(dinoFile, f)
+    f.close()
+    return True
+
+
 def getPlayers():
     with open('points.json') as json_file:
         players = json.load(json_file)
@@ -685,6 +709,56 @@ async def on_message(message):
                         msg = str(command[1]) + ' Does not have a pointshop account.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
+        elif message.content.startswith('!save'):
+            if not len(command) == 3:
+                msg = 'Please use !save **@discordName** **Name_Of_Save**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = ply['steamID']
+                    saveDino(command[2], steamID)
+                    msg = str(command[1]) + ' Saved to ' + str(command[2])
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+        elif message.content.startswith('!load'):
+            if not len(command) == 3:
+                msg = 'Please use !load **@discordName** **Name_Of_Save**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    steamID = ply['steamID']
+                    if loadDino(command[2], steamID):
+                        msg = str(command[1]) + ' Loaded dino file ' + str(command[2])
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                    else:
+                        msg = str(command[2]) + ' File does not exist.'
+                        msg = msg.format(message)
+                        await client.send_message(message.channel, msg)
+                    
+
         elif message.content.startswith('!edit'):
             if not len(command) == 4:
                 msg = 'Please use !edit **@discordName** **Trait** **NewValue**'
