@@ -201,6 +201,7 @@ dinoNameDict = {
     'stego': 'Stego',
     'ava': 'Ava',
     'theri': 'Theri',
+    'pue': 'Puerta',
     'diablo': 'DiabloAdultS'
 }
 
@@ -230,6 +231,7 @@ dinoPriceDict = {
     'Stego': '22',
     'Ava': '8',
     'Theri': '26',
+    'Puerta': '250',
     'DiabloAdultS': '18'
 }
 
@@ -409,6 +411,14 @@ async def on_message(message):
             f.close()
             os.system('ftp -i -s:up.ftp')
             msg = '{0.author.mention} | Finished uploading player file ' + str(command[1])
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+        elif message.content.startswith('!wipe'):
+            msg = '{0.author.mention} | Initating Wipe...'
+            msg = msg.format(message)
+            await client.send_message(message.channel, msg)
+            os.system('ftp -i -s:new.ftp')
+            msg = '{0.author.mention} | Wiped all player files from Queens Isle '
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
 
