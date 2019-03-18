@@ -459,14 +459,17 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                    plyID = plyID[1:]
             found = 0
-            for ply in players:
-                    if ply['discordID'] == plyID:
-                        msg = '<@' + plyID + '>'
-                        msg = msg + ', you have **' + ply['points'] + '** <:fossil:556472990460805138>'
-                        msg = msg.format(message)
-                        await client.send_message(message.channel, msg)
-                        found = 1
+            players = getPlayers()
+            found = checkDiscordID(plyID, players)
+            if found:
+                msg = '<@' + plyID + '>'
+                msg = msg + ', you have **' + found['points'] + '** <:fossil:556472990460805138>'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+                found = 1
             if not found:
                 msg = '<@' + plyID + '>'
                 msg = msg + ', you do not have a pointshop account.'
@@ -523,6 +526,8 @@ async def on_message(message):
                     plyID = plyID[1:]
                     plyID = plyID[1:]
                     plyID = plyID[:-1]
+                    if plyID[0] == '!':
+                        plyID = plyID[1:]
                     ply = checkDiscordID(plyID, players)
                     steamID = ply['steamID']
                     if changePlayer(steamID, "bGender", gender):
@@ -546,6 +551,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                 ply = checkDiscordID(plyID, players)
                 if not ply:
@@ -573,6 +580,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                 ply = checkDiscordID(plyID, players)
                 if not ply:
@@ -600,6 +609,8 @@ async def on_message(message):
             plyID = plyID[1:]
             plyID = plyID[1:]
             plyID = plyID[:-1]
+            if plyID[0] == '!':
+                        plyID = plyID[1:]
 
             players = getPlayers()
 
@@ -629,6 +640,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                 ply = checkDiscordID(plyID, players)
                 if not ply:
@@ -654,6 +667,8 @@ async def on_message(message):
                     plyID = plyID[1:]
                     plyID = plyID[1:]
                     plyID = plyID[:-1]
+                    if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                     warnings = getWarnings(plyID)
                     warnString = 'None'
@@ -719,6 +734,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                 ply = checkDiscordID(plyID, players)
                 if not ply:
@@ -741,6 +758,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                 ply = checkDiscordID(plyID, players)
                 if not ply:
@@ -769,6 +788,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                 ply = checkDiscordID(plyID, players)
                 if not ply:
@@ -791,6 +812,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 steamID = str(command[2])
 
                 found = checkSteamID(steamID, players)
@@ -818,6 +841,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 found = checkDiscordID(plyID, players)
                 if found:
                     found['points'] = command[2]
@@ -839,6 +864,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 found = checkDiscordID(plyID, players)
                 if found:
                     found['points'] = str(int(found['points']) + int(command[2]))
@@ -860,6 +887,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 found = checkDiscordID(plyID, players)
                 if found:
                     if int(found['points']) - int(command[2]) > 0:
@@ -892,6 +921,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
             found = 0
             for ply in players:
                     if ply['discordID'] == plyID:
@@ -952,6 +983,8 @@ async def on_message(message):
                     plyID = plyID[1:]
                     plyID = plyID[1:]
                     plyID = plyID[:-1]
+                    if plyID[0] == '!':
+                        plyID = plyID[1:]
                     ply = checkDiscordID(plyID, players)
                     if not ply:
                         msg = plyID = str(command[1]) + ' does not have a pointshop account'
@@ -1027,6 +1060,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
             found = 0
             for ply in players:
                     if ply['discordID'] == plyID:
@@ -1142,6 +1177,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
             found = 0
             for ply in players:
                     if ply['discordID'] == plyID:
@@ -1161,6 +1198,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 found = checkDiscordID(plyID, players)
                 if found:
                     if int(found['points']) - int(command[2]) > 0:
@@ -1187,6 +1226,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 found = checkDiscordID(plyID, players)
                 if found:
                     found['points'] = str(int(found['points']) + int(command[2]))
@@ -1208,6 +1249,8 @@ async def on_message(message):
                 plyID = plyID[1:]
                 plyID = plyID[1:]
                 plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
                 found = checkDiscordID(plyID, players)
                 if found:
                     found['points'] = command[2]
@@ -1234,6 +1277,8 @@ async def on_message(message):
                     plyID = plyID[1:]
                     plyID = plyID[1:]
                     plyID = plyID[:-1]
+                    if plyID[0] == '!':
+                        plyID = plyID[1:]
 
                     found = False
                     for ply in players:
