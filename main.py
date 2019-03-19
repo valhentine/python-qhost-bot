@@ -724,6 +724,41 @@ async def on_message(message):
                         msg = str(command[1]) + ' Does not have a pointshop account.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
+        elif message.content.startswith('!bring'):
+            if not len(command) == 2:
+                msg = 'Please use !bring **@discordName**'
+                msg = msg.format(message)
+                await client.send_message(message.channel, msg)
+            else:
+                plyID = str(command[1])
+                plyID = plyID[1:]
+                plyID = plyID[1:]
+                plyID = plyID[:-1]
+                if plyID[0] == '!':
+                        plyID = plyID[1:]
+
+                ply = checkDiscordID(plyID, players)
+                if not ply:
+                    msg = str(command[1]) + ' Does not have a pointshop account.'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+                else:
+                    admin = checkDiscordID(message.author.id, players)
+                    adminSteamID = admin['steamID']
+                    verifyExists(adminSteamID)
+                    adminFile = getPlayer(adminSteamID)
+                    location = str(adminFile['Location_Isle_V3'])
+
+                    verifyExists(ply['steamID'])
+                    plyFile = getPlayer(ply['steamID'])
+                    changePlayer(ply['steamID'], 'Location_Isle_V3', location)
+
+                    msg = str(command[1]) + ' Brought to <@' + message.author.id + '>'
+                    msg = msg.format(message)
+                    await client.send_message(message.channel, msg)
+
+
+
         elif message.content.startswith('!save'):
             if not len(command) == 3:
                 msg = 'Please use !save **@discordName** **Name_Of_Save**'
