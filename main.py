@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import discord
 import os
 import psutil
@@ -312,6 +313,36 @@ async def on_message(message):
             
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
+        elif message.content.startswith('!plot'):
+            with open('points.json') as json_file:
+                players = json.load(json_file)
+            points = []
+
+            for player in players:
+                if not player['points'] == 'admin':
+                    point = int(player['points'])
+                    points.append(point)
+
+            plt.plot(points)
+            
+            plt.savefig('plot.png')
+            await client.send_file(message.channel, 'plot.png')
+        elif message.content.startswith('!hist'):
+            with open('points.json') as json_file:
+                players = json.load(json_file)
+
+            points = []
+
+            for player in players:
+                if not player['points'] == 'admin':
+                    point = int(player['points'])
+                    points.append(point)
+
+            plt.hist(points)
+            plt.ylabel('Points')
+            plt.xlabel('Player Accounts')
+            plt.savefig('plot.png')
+            await client.send_file(message.channel, 'plot.png')
         elif message.content.startswith('!stats'):
             pDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players'
             onlyfiles = next(os.walk(pDir))[2]
