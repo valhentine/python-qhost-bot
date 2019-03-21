@@ -322,11 +322,11 @@ async def on_message(message):
                 if not player['points'] == 'admin':
                     point = int(player['points'])
                     points.append(point)
-
+            plt.clf()
             plt.plot(points)
             
-            plt.savefig('plot.png')
-            await client.send_file(message.channel, 'plot.png')
+            plt.savefig('plot1.png')
+            await client.send_file(message.channel, 'plot1.png')
         elif message.content.startswith('!hist'):
             with open('points.json') as json_file:
                 players = json.load(json_file)
@@ -337,12 +337,12 @@ async def on_message(message):
                 if not player['points'] == 'admin':
                     point = int(player['points'])
                     points.append(point)
-
+            plt.clf()
             plt.hist(points)
             plt.ylabel('Points')
             plt.xlabel('Player Accounts')
-            plt.savefig('plot.png')
-            await client.send_file(message.channel, 'plot.png')
+            plt.savefig('plot2.png')
+            await client.send_file(message.channel, 'plot2.png')
         elif message.content.startswith('!stats'):
             pDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players'
             onlyfiles = next(os.walk(pDir))[2]
