@@ -226,6 +226,7 @@ dinoNameDict = {
     'ava': 'Ava',
     'theri': 'Theri',
     'pue': 'Puerta',
+    'gali': 'GalliAdultS',
     'diablo': 'DiabloAdultS'
 }
 
@@ -256,6 +257,7 @@ dinoPriceDict = {
     'Ava': '8',
     'Theri': '26',
     'Puerta': '250',
+    'GalliAdultS': '12',
     'DiabloAdultS': '18'
 }
 
