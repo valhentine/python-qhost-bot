@@ -4,12 +4,202 @@ import os
 import psutil
 import json
 import urllib.request
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from datetime import datetime
+from itertools import groupby
+import re
 
 TOKEN = 'NTUwODU1MTUxODkyNjkyOTky.D1ovfA._13Nmqjkh01I_Q9b8I_wPX9mtBA'
 client = discord.Client()
 directory = "D:\servers\sapphire\isle"
 playersDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players\\'
 dinosDir = 'D:\qhost-bot\dinos\\'
+
+def graph_points():
+    plt.clf()
+    with open('points.json') as json_file:
+        players = json.load(json_file)
+    points = []
+
+    for player in players:
+        if not player['points'] == 'admin':
+            point = int(player['points'])
+            points.append(point)
+    points.sort()
+    plt.plot(points)
+    plt.title('Points Of All Players | qBot ' + datetime.now().strftime('%Y-%m-%d'))
+    plt.savefig('graph.png')
+
+
+def graph_growth():
+    plt.clf()
+    players = []
+    for root, dirs, files in os.walk(playersDir):
+        for filename in files:
+            with open(playersDir + filename) as f:
+                players.append(json.load(f))
+            f.close()
+    growths = []
+    for player in players:
+        growths.append(float(player['Growth']))
+    growths.sort()
+    plt.plot(growths)
+    plt.xticks([])
+    plt.xlabel('Players')
+    plt.ylabel('Growth')
+    plt.title('Growth Of All Players | qBot ' + datetime.now().strftime('%Y-%m-%d'))
+    plt.savefig('graph.png')
+
+
+def graph_dinos():
+    plt.clf()
+    players = []
+    for root, dirs, files in os.walk(playersDir):
+        for filename in files:
+            with open(playersDir + filename) as f:
+                players.append(json.load(f))
+            f.close()
+    dinos = []
+    for player in players:
+        dinos.append(player['CharacterClass'])
+
+    dinos.sort()
+    labels = dict.fromkeys(dinos)
+    sizes = [len(list(group)) for key, group in groupby(dinos)]
+    plt.pie(sizes, labels=labels)
+    plt.title('Distribution Of All Dinos | qBot ' + datetime.now().strftime('%Y-%m-%d'))
+    plt.savefig('graph.png')
+
+
+def graph_dinos_all():
+    plt.clf()
+    players = []
+    for root, dirs, files in os.walk(playersDir):
+        for filename in files:
+            with open(playersDir + filename) as f:
+                players.append(json.load(f))
+            f.close()
+    dinos = []
+    for player in players:
+        dinos.append(player['CharacterClass'])
+
+    dinos.sort()
+    dinosAll = []
+
+    for dino in dinos:
+        name = re.findall('[A-Z][^A-Z]*', dino)
+        dinosAll.append(name[0])
+    dinos = dinosAll
+
+    def make_autopct(values):
+        def my_autopct(pct):
+            total = sum(values)
+            val = int(round(pct * total / 100.0))
+            return '{p:.2f}%  ({v:d})'.format(p=pct, v=val)
+
+        return my_autopct
+
+    labels = dict.fromkeys(dinos)
+    sizes = [len(list(group)) for key, group in groupby(dinos)]
+    plt.pie(sizes, labels=labels, autopct=make_autopct(sizes))
+    plt.title('Distribution Of Dinos | qBot ' + datetime.now().strftime('%Y-%m-%d'))
+    plt.savefig('graph.png')
+
+
+def graph_location():
+    plt.clf()
+    players = []
+    for root, dirs, files in os.walk(playersDir):
+        for filename in files:
+            with open(playersDir + filename) as f:
+                players.append(json.load(f))
+            f.close()
+    dinos = []
+    xs = []
+    ys = []
+    zs = []
+    for player in players:
+        try:
+            dinos.append(player['Location_Isle_V3'])
+        except:
+            pass
+    for dino in dinos:
+        location = dino.split()
+        x = location[0]
+        y = location[1]
+        z = location[2]
+
+        x = x[1:]
+        x = x[1:]
+
+        y = y[1:]
+        y = y[1:]
+
+        z = z[1:]
+        z = z[1:]
+
+        xs.append(float(x))
+        ys.append(float(y))
+        zs.append(float(z))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(xs, ys, zs, c='r', marker='o')
+
+    plt.title('Location Of Players 3D | qBot ' + datetime.now().strftime('%Y-%m-%d'))
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(14)
+        tick.label.set_fontsize('x-small')
+    for tick in ax.yaxis.get_major_ticks():
+        tick.label.set_fontsize(14)
+        tick.label.set_fontsize('x-small')
+    for tick in ax.zaxis.get_major_ticks():
+        tick.label.set_fontsize(14)
+        tick.label.set_fontsize('x-small')
+    ax.set_xlabel('X Coordinate')
+    ax.set_ylabel('Y Coordinate')
+    ax.set_zlabel('Z Coordinate')
+
+    plt.savefig('graph.png')
+
+
+def graph_location_2d():
+    plt.clf()
+    players = []
+    for root, dirs, files in os.walk(playersDir):
+        for filename in files:
+            with open(playersDir + filename) as f:
+                players.append(json.load(f))
+            f.close()
+    dinos = []
+    xs = []
+    ys = []
+    zs = []
+    for player in players:
+        try:
+            dinos.append(player['Location_Isle_V3'])
+        except:
+            pass
+    for dino in dinos:
+        location = dino.split()
+        x = location[0]
+        y = location[1]
+
+        x = x[1:]
+        x = x[1:]
+
+        y = y[1:]
+        y = y[1:]
+
+        xs.append(float(x))
+        ys.append(float(y))
+
+    plt.scatter(xs, ys, alpha=0.5, zorder=2)
+    plt.title('Location Of Players 2D | qBot ' + datetime.now().strftime('%Y-%m-%d'))
+    plt.xlabel('X Coordinate')
+    plt.ylabel('Y Coordinate')
+    plt.savefig('graph.png')
 
 def killServer():
     os.system('taskkill /F /FI "WindowTitle eq Administrator:  qHost Isle Server" /T')
@@ -313,7 +503,7 @@ async def on_message(message):
             
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
-        elif message.content.startswith('!plot'):
+        elif message.content.startswith('!pointplot'):
             with open('points.json') as json_file:
                 players = json.load(json_file)
             points = []
@@ -327,7 +517,27 @@ async def on_message(message):
             
             plt.savefig('plot1.png')
             await client.send_file(message.channel, 'plot1.png')
-        elif message.content.startswith('!hist'):
+        elif message.content.startswith('!pointdist'):
+                plt.clf()
+
+                with open('points.json') as json_file:
+                        players = json.load(json_file)
+
+                points = []
+
+                for player in players:
+                        if not player['points'] == 'admin':
+                                point = int(player['points'])
+                                points.append(point)
+
+                points.sort()
+                plt.plot(points)
+                plt.xticks([])
+                plt.ylabel('Points')
+                plt.xlabel('Players')
+                plt.savefig('plot.png')
+                await client.send_file(message.channel, 'plot.png')
+        elif message.content.startswith('!pointhist'):
             with open('points.json') as json_file:
                 players = json.load(json_file)
 
@@ -1233,7 +1443,7 @@ async def on_message(message):
                 msg = msg + '\n ' + prices[i] + extra + ' <:fossil:556472990460805138> | !purchase ' + dinos[i]
             msg = msg.format(message)
             await client.send_message(message.channel, msg)    
-    elif str(message.channel) == 'event-points':
+    elif str(message.channel) == 'event-points': #event-points
         command = message.content
         command = command.split()
         players = getPlayers()
@@ -1397,6 +1607,28 @@ async def on_message(message):
                         msg = str(command[1]) + ' Does not have a pointshop account.'
                         msg = msg.format(message)
                         await client.send_message(message.channel, msg)
+    elif str(message.channel) == 'data-analysis':
+        if message.content.startswith('!points'):
+            graph_points()
+            await client.send_file(message.channel, 'graph.png')
+        elif message.content.startswith('!growth'):
+            graph_growth()
+            await client.send_file(message.channel, 'graph.png')
+        elif message.content.startswith('!dinosall'):
+            graph_dinos()
+            await client.send_file(message.channel, 'graph.png')
+        elif message.content.startswith('!dinosmain'):
+            graph_dinos_all()
+            await client.send_file(message.channel, 'graph.png')
+        elif message.content.startswith('!location3d'):
+            graph_location()
+            await client.send_file(message.channel, 'graph.png')
+        elif message.content.startswith('!location2d'):
+            graph_location_2d()
+            await client.send_file(message.channel, 'graph.png')
+
+
+
 
 @client.event
 async def on_ready():
