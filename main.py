@@ -437,7 +437,7 @@ dinoPriceDict = {
     'Austro': '6',
     'Herrera': '6',
     'Shant': '60',
-    'Camara': '180',
+    'Camara': '280',
     'TrikeAdultS': '36',
     'ParaAdultS': '22',
     'MaiaAdultS': '14',
@@ -1238,7 +1238,7 @@ async def on_message(message):
                         newPlayer = {
                             'discordID': plyID,
                             'steamID': steamID,
-                            'points': '250'
+                            'points': '50'
                         }
                         players.insert(0, newPlayer)
                         savePlayers(players)
@@ -1311,7 +1311,7 @@ async def on_message(message):
                         newPlayer = {
                             'discordID': plyID,
                             'steamID': steamID,
-                            'points': '250'
+                            'points': '50'
                         }
                         players.insert(0, newPlayer)
                         savePlayers(players)
