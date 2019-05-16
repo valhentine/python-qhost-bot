@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import discord
 import os
 import psutil
+import time
 import json
 import urllib.request
 import matplotlib.pyplot as plt
@@ -556,6 +557,16 @@ async def on_message(message):
         elif message.content.startswith('!stats'):
             pDir = 'D:\servers\sapphire\isle\TheIsle\Saved\Databases\Survival\Players'
             onlyfiles = next(os.walk(pDir))[2]
+            activePlayers = []
+            
+            for i in onlyfiles:
+                statbuf = os.stat(pDir + '/' + i)
+                sec = statbuf.st_mtime
+                ts = time.time()
+                if ts - sec < 864000:
+                    activePlayers.append(i)
+            print(activePlayers)
+
             joinedCount = str(len(onlyfiles))
             players = getPlayers()
             plyCount = 0
@@ -563,7 +574,8 @@ async def on_message(message):
                 plyCount = plyCount + 1
             registerRate = str(round(plyCount / int(joinedCount) * 100))
             msg = 'Registered Discord Users: **' + str(plyCount) + '**\nUnique Players To Join Server: **' + joinedCount + '**\n'
-            msg = msg + 'That is a register rate of **' + registerRate + '**%'
+            msg = msg + 'That is a register rate of **' + registerRate + '**%\n'
+            msg = msg + 'Unique players in the last 10 days: **' + str(len(activePlayers)) + '**'
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
             
@@ -678,14 +690,6 @@ async def on_message(message):
             f.close()
             os.system('ftp -i -s:up.ftp')
             msg = '{0.author.mention} | Finished uploading player file ' + str(command[1])
-            msg = msg.format(message)
-            await client.send_message(message.channel, msg)
-        elif message.content.startswith('!wipe'):
-            msg = '{0.author.mention} | Initating Wipe...'
-            msg = msg.format(message)
-            await client.send_message(message.channel, msg)
-            os.system('ftp -i -s:new.ftp')
-            msg = '{0.author.mention} | Wiped all player files from Queens Isle '
             msg = msg.format(message)
             await client.send_message(message.channel, msg)
 
