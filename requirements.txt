@@ -1,0 +1,4 @@
+matplotlib
+discord
+psutil
+itertools
